@@ -83,6 +83,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // セル内のボタンのアクションをソースコードで設定する
         cell.likeButton.addTarget(self, action:#selector(handleLikeButton(_:)), for: .touchUpInside)
 
+        cell.commentButton.addTarget(self, action:#selector(handleCommentButton(_:)), for: .touchUpInside)
+        
         return cell
     }
     // セル内のボタンがタップされた時に呼ばれるメソッド
@@ -111,5 +113,48 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
             postRef.updateData(["likes": updateValue])
         }
+    }
+    
+    @objc func handleCommentButton(_ sender: UIButton) {
+
+        // タップされたセルのインデックスを求める
+        let point = sender.convert(CGPoint.zero, to: tableView)
+        let indexPath = tableView.indexPathForRow(at: point)
+
+        // 配列からタップされたインデックスのデータを取り出す
+        let postData = postArray[indexPath!.row]
+
+        var alertTextField: UITextField?
+
+        let alert = UIAlertController(
+            title: "コメント",
+            message: "コメントを入力して下さい。",
+            preferredStyle: UIAlertController.Style.alert)
+        alert.addTextField(
+            configurationHandler: {(textField: UITextField!) in
+                alertTextField = textField
+                textField.text = postData.comment
+                // textField.placeholder = "Mike"
+                // textField.isSecureTextEntry = true
+        })
+        alert.addAction(
+            UIAlertAction(
+                title: "Cancel",
+                style: UIAlertAction.Style.cancel,
+                handler: nil))
+        alert.addAction(
+            UIAlertAction(
+                title: "OK",
+                style: UIAlertAction.Style.default) { _ in
+                if let text = alertTextField?.text {
+                    // commentに更新データを書き込む
+                    let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
+                    postRef.updateData(["comment": text ])
+                    postRef.updateData(["commentName": postData.name ])
+                }
+            }
+        )
+
+        self.present(alert, animated: true, completion: nil)
     }
 }

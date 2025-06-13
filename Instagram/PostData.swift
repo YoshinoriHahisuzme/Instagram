@@ -16,6 +16,8 @@ class PostData: NSObject {
     var date = ""
     var likes: [String] = []
     var isLiked: Bool = false
+    var comment = ""
+    var commentName = ""
     
     init(document: QueryDocumentSnapshot) {
         self.id = document.documentID
@@ -47,9 +49,17 @@ class PostData: NSObject {
                 self.isLiked = true
             }
         }
+        
+        if let commentName = postDic["commentName"] as? String {
+            self.commentName = commentName
+        }
+        
+        if let comment = postDic["comment"] as? String {
+            self.comment = comment
+        }
     }
     
     override var description: String {
-        return "PostData: name=\(name); caption=\(caption); date=\(date); likes=\(likes.count); id=\(id);"
+        return "PostData: name=\(name); caption=\(caption); date=\(date); likes=\(likes.count); comment=\(comment); commentName=\(commentName); isLiked=\(isLiked); \(super.description)() id=\(id);"
     }
 }
