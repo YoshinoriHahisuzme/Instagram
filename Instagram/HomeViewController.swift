@@ -133,9 +133,6 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         alert.addTextField(
             configurationHandler: {(textField: UITextField!) in
                 alertTextField = textField
-                textField.text = postData.comment
-                // textField.placeholder = "Mike"
-                // textField.isSecureTextEntry = true
         })
         alert.addAction(
             UIAlertAction(
@@ -146,14 +143,17 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
             UIAlertAction(
                 title: "OK",
                 style: UIAlertAction.Style.default) { _ in
-                if let text = alertTextField?.text {
+                if let comment = alertTextField?.text {
+
+                    let commentName = Auth.auth().currentUser?.displayName
+
                     // commentに更新データを書き込む
                     let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
-                    postRef.updateData(["comment": text ])
-                    postRef.updateData(["commentName": postData.name ])
+                    postRef.updateData(["comment": FieldValue.arrayUnion([commentName! + " : " + comment])])
                 }
             }
         )
+        
 
         self.present(alert, animated: true, completion: nil)
     }

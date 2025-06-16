@@ -17,7 +17,6 @@ class PostTableViewCell: UITableViewCell {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var captionLabel: UILabel!
     @IBOutlet weak var commentLabel: UILabel!
-    @IBOutlet weak var commentNameLable: UILabel!
     
     // PostDataの内容をセルに表示
     func setPostData(_ postData: PostData) {
@@ -45,11 +44,11 @@ class PostTableViewCell: UITableViewCell {
             self.likeButton.setImage(buttonImage, for: .normal)
         }
         // 名前の表示
-        self.commentNameLable.text = postData.commentName
-        
-        //　コメントの表示
-        self.commentLabel.text = postData.comment
-
+        var comment = ""
+        for idx in 0..<postData.comment.count {
+            comment += postData.comment[idx] + "\n"
+        }
+        self.commentLabel.text = comment
     }
 
     override func awakeFromNib() {
